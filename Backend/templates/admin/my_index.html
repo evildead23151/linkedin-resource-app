@@ -1,0 +1,33 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+  <h1 class="page-header">Admin Dashboard</h1>
+  <p class="lead">
+    Welcome to your resource management panel.
+  </p>
+  <p>
+    From here, you can add new LinkedIn posts with their associated resources,
+    and you can view all the user submissions you have collected.
+  </p>
+  <hr>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Manage LinkedIn Posts</h5>
+          <p class="card-text">Add, edit, or delete the LinkedIn posts that trigger a resource email.</p>
+          <a href="{{ url_for('postresource.index_view') }}" class="btn btn-primary">Go to Post Resources</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">View Submissions</h5>
+          <p class="card-text">See a list of everyone who has requested a resource from your site.</p>
+          <a href="{{ url_for('submission.index_view') }}" class="btn btn-primary">Go to Submissions</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

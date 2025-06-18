@@ -1,0 +1,12 @@
+# Virtual Environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Secrets file - DO NOT UPLOAD
+.env
+
+# Local database file
+database.db
