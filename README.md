@@ -21,7 +21,7 @@ I built this web application to solve my exact use case. It provides a central, 
 
 **Live Demo:**
 *   **Frontend:** [linkedin-resource-app1.onrender.com](https://linkedin-resource-app1.onrender.com/)
-*   **Admin Panel:** [linkedin-resource-app.onrender.com/admin](https://linkedin-resource-app.onrender.com/admin) (Password Protected)
+*   **Admin Panel:** [[linkedin-resource-app.onrender.com/admin](https://linkedin-resource-app.onrender.com/admin)](https://linkedin-resource-app.onrender.com/admin) (Password Protected)
 
 ---
 
