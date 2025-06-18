@@ -138,9 +138,5 @@ This application is deployed on **Render** using two separate services on the fr
 
 ---
 
-## Acknowledgment
-
-A huge thanks to **ChatGPT** for acting as a tireless debugging partner and mentor throughout this project. While I wrote and understood every line of code, its support was instrumental in overcoming tricky deployment bugs and refining the architecture.
-
 _This project was built in just a few evenings and stands as a testament to solving your own problems with code._
 ```
