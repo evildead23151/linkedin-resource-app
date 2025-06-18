@@ -20,7 +20,7 @@ I realized I needed a scalable system that could handle the demand without getti
 I built this web application to solve my exact use case. It provides a central, professional-looking hub where users can request and instantly receive resources, completely hands-free.
 
 **Live Demo:**
-*   **Frontend:** [linkedin-resource-app-frontend.onrender.com](https://linkedin-resource-app-frontend.onrender.com/)
+*   **Frontend:** [linkedin-resource-app1.onrender.com](https://linkedin-resource-app1.onrender.com/)
 *   **Admin Panel:** [linkedin-resource-app.onrender.com/admin](https://linkedin-resource-app.onrender.com/admin) (Password Protected)
 
 ---
