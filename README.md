@@ -3,7 +3,6 @@
 A full-stack web application that automates the distribution of resources from LinkedIn posts, built to solve a real-world problem of scale and deliver a seamless user experience.
 
 ![Project Demo GIF](https://user-images.githubusercontent.com/YOUR_USER_ID/YOUR_IMAGE_ID.gif)
-_**(Instruction: Create a short GIF of the app flow and replace the link above. Use a tool like LICEcap or ScreenToGif.)**_
 
 ---
 
