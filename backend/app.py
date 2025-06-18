@@ -16,18 +16,19 @@ app = Flask(__name__)
 CORS(app)
 
 # Database Configuration
-# Use Render's disk path in production, otherwise use local DB
-if os.environ.get('RENDER'):
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////var/data/database.db'
+database_url = os.getenv('DATABASE_URL')
+if database_url:
+    # Use the production database URL from Neon
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace("postgres://", "postgresql://", 1)
 else:
+    # Use a local SQLite database for development
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.urandom(24)  # Used for session security
-
+app.config['SECRET_KEY'] = os.urandom(24)
 db = SQLAlchemy(app)
 
-# Database Models
+# Database Models (No changes here)
 class PostResource(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     post_url = db.Column(db.String(500), unique=True, nullable=False)
@@ -43,56 +44,37 @@ class Submission(db.Model):
     company_college = db.Column(db.String(100))
     requested_resource_name = db.Column(db.String(200))
 
-# Secure Admin Views with Basic Auth
+# Secure Admin Views with Basic Auth (No changes here)
 class AuthView(ModelView):
     def is_accessible(self):
         auth = request.authorization
-        return (auth and
-                auth.username == os.getenv('ADMIN_USER') and
-                auth.password == os.getenv('ADMIN_PASS'))
-
+        return (auth and auth.username == os.getenv('ADMIN_USER') and auth.password == os.getenv('ADMIN_PASS'))
     def inaccessible_callback(self, name, **kwargs):
-        return Response('Authentication Required', 401, {
-            'WWW-Authenticate': 'Basic realm="Login Required"'
-        })
+        return Response('Authentication Required', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
 class SecureAdminIndexView(AdminIndexView):
     def is_accessible(self):
         auth = request.authorization
-        return (auth and
-                auth.username == os.getenv('ADMIN_USER') and
-                auth.password == os.getenv('ADMIN_PASS'))
-
+        return (auth and auth.username == os.getenv('ADMIN_USER') and auth.password == os.getenv('ADMIN_PASS'))
     def inaccessible_callback(self, name, **kwargs):
-        return Response('Authentication Required', 401, {
-            'WWW-Authenticate': 'Basic realm="Login Required"'
-        })
+        return Response('Authentication Required', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
-# Admin Panel Setup
+# Admin Panel Setup (No changes here)
 admin = Admin(app, name='Resource Admin', template_mode='bootstrap3', index_view=SecureAdminIndexView())
 admin.add_view(AuthView(PostResource, db.session, name='Manage Posts'))
 admin.add_view(AuthView(Submission, db.session, name='View Submissions'))
 
-# Main API Route
+# Main API Route (No changes here)
 @app.route('/api/request-resource', methods=['POST'])
 def request_resource():
+    # ... (rest of the function is the same)
     data = request.get_json()
     linkedin_post_url = data.get('linkedin_post_url')
     resource = PostResource.query.filter_by(post_url=linkedin_post_url).first()
-
-    if not resource:
-        return jsonify({"status": "error", "message": "Sorry, this LinkedIn post is not associated with a resource."}), 404
-
-    new_submission = Submission(
-        name=data.get('name'),
-        email=data.get('email'),
-        position=data.get('position'),
-        company_college=data.get('company_college'),
-        requested_resource_name=resource.resource_name
-    )
+    if not resource: return jsonify({"status": "error", "message": "Sorry, this LinkedIn post is not associated with a resource."}), 404
+    new_submission = Submission(name=data.get('name'), email=data.get('email'), position=data.get('position'), company_college=data.get('company_college'), requested_resource_name=resource.resource_name)
     db.session.add(new_submission)
     db.session.commit()
-
     try:
         sender_email = os.getenv('EMAIL_ADDRESS')
         sender_password = os.getenv('EMAIL_PASSWORD')
@@ -100,25 +82,21 @@ def request_resource():
         msg['From'] = f"Gitesh Malik <{sender_email}>"
         msg['To'] = data.get('email')
         msg['Subject'] = f"Here is your requested resource: {resource.resource_name}"
-        body = f"""Hi {data.get('name')},
-
-Here is the resource you requested:
-Resource: {resource.resource_name}
-Download Link: {resource.resource_link}
-
-Best,
-Gitesh Malik"""
+        body = f"Hi {data.get('name')},\n\nHere is the resource you requested:\nResource: {resource.resource_name}\nDownload Link: {resource.resource_link}\n\nBest,\nGitesh Malik"
         msg.attach(MIMEText(body, 'plain'))
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
             server.login(sender_email, sender_password)
             server.send_message(msg)
-
         return jsonify({"status": "success", "message": "Success! The resource has been sent."}), 200
     except Exception as e:
         print(f"An error occurred: {e}")
         return jsonify({"status": "error", "message": "An error occurred while sending the email."}), 500
 
+# ===================================================================
+# == NEW: Automatic Database Initialization                        ==
+# ===================================================================
+with app.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True, port=5000)
